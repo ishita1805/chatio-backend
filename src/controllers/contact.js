@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Contact, Request, User } = require('../models')
+const { Contact, Request, User, Message } = require('../models')
 
 exports.createContact = (req, res, next) => {
     Contact.create({
@@ -70,7 +70,13 @@ exports.getContacts = (req, res, next) => {
                 model: User,
                 as: 'User2'
             },
-        ]
+            {
+                model: Message,
+                limit: 1,
+                order: [[ 'createdAt', 'DESC' ]]
+            },
+        ],
+        order: [[ 'updatedAt', 'DESC' ]]
     })
     .then((resp) => {
      res.status(200).json({
@@ -78,9 +84,10 @@ exports.getContacts = (req, res, next) => {
      }) 
     })
     .catch((e) => {
-     res.status(500).json({
-         error: 'could not get contaCt'
-     })
+        console.log(e);
+        res.status(500).json({
+            error: 'could not get contaCt'
+        })
     });
 }
 
@@ -99,6 +106,68 @@ exports.updateContact = (req, res, next) => {
     .catch((e) => {
         res.status(500).json({
             error: 'could not update conversation'
+        })
+    });
+}
+
+exports.getContact = (req, res, next) => {
+    Contact.findOne({
+        where: {
+           id: req.body.id
+        },
+        include: [
+            {
+                model: User,
+                as: 'User1'
+            },
+            {
+                model: User,
+                as: 'User2'
+            },
+            {
+                model: Message,
+                include: {
+                    model: User
+                },
+            },
+        ],
+        order: [
+            [Message, 'createdAt', 'DESC'],
+        ],
+    })
+    .then((resp) => {
+     res.status(200).json({
+         resp
+     }) 
+    })
+    .catch((e) => {
+        console.log(e);
+        res.status(500).json({
+            error: 'error getting conversation'
+        })
+    });
+}
+
+exports.getContactMedia = (req, res, next) => {
+    Message.findAll({
+        where: {
+            ContactId: req.body.id,
+            type: 'media',
+        },
+        order: [
+            ['createdAt', 'DESC'],
+        ],
+    })
+    .then((resp) => {
+        console.log(resp);
+     res.status(200).json({
+         resp
+     }) 
+    })
+    .catch((e) => {
+        console.log(e);
+        res.status(500).json({
+            error: 'error getting conversation'
         })
     });
 }

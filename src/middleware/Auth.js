@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   const token = req.cookies['chat-jwt'];
-  console.log(token);
   if (token === '' || !token) {
     res.clearCookie('chat-jwt');
     return res.status(500).json({
