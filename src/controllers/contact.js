@@ -159,7 +159,7 @@ exports.getContactMedia = (req, res, next) => {
         ],
     })
     .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
      res.status(200).json({
          resp
      }) 

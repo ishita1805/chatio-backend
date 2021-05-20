@@ -49,7 +49,7 @@ exports.createRequest = (req, res, next) => {
                         SenderId: req.user,
                     })
                     .then((resp) => {
-                        console.log(resp);
+                        // console.log(resp);
                         return res.status(200).json({
                             message: 'request sent'
                         })
