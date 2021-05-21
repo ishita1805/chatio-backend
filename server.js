@@ -52,6 +52,10 @@ io.on('connection', (socket) => {
     io.to(room).emit('message', { room, msg });
   })
 
+  socket.on('deletedImage',({ id, room }) => {
+    io.to(room).emit('reloadChat', { id, room });
+  })
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   })

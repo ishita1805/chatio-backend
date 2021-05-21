@@ -69,3 +69,24 @@ exports.createMedia = (req, res, next) => {
         res.status(500).json({ e })
     });
 }
+
+exports.deleteMedia = (req, res, next) => {
+    console.log(req.body.id);
+    console.log(req.body.pid);
+    cloudinary.uploader.destroy(req.body.pid)
+    .then((response) => {
+        console.log(response);
+        Message.destroy({ where: { id: req.body.id } })
+        .then(() => {
+            res.status(200).send({
+                message: 'media file deleted successfully!'
+            })
+        })
+        .catch((e) => {
+            res.status(500).json({ e })
+        })
+    })
+    .catch((e) => {
+        res.status(500).json({ e })
+    })
+}
