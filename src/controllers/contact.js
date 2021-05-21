@@ -110,6 +110,24 @@ exports.updateContact = (req, res, next) => {
     });
 }
 
+exports.updateNotification = (req, res, next) => {
+    Contact.update({ notification: false },{
+        where: {
+           id: req.body.id
+        }
+    })
+    .then((resp) => {
+     res.status(200).json({
+         resp
+     }) 
+    })
+    .catch((e) => {
+        res.status(500).json({
+            error: 'could not update conversation'
+        })
+    });
+}
+
 exports.getContact = (req, res, next) => {
     Contact.findOne({
         where: {
@@ -171,3 +189,5 @@ exports.getContactMedia = (req, res, next) => {
         })
     });
 }
+
+

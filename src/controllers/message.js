@@ -15,7 +15,8 @@ exports.create = (req, res, next) => {
     Message.create(req.body)
     .then((resp) => {
         Contact.update({
-            id: req.body.ContactId
+            id: req.body.ContactId,
+            notification: true
         },{
             where: { id: req.body.ContactId }
         })
@@ -41,7 +42,8 @@ exports.createMedia = (req, res, next) => {
        Message.create(data)
         .then((resp) => {
             Contact.update({
-                id: req.body.ContactId
+                id: req.body.ContactId,
+                notification: true
             },{
                 where: { id: req.body.ContactId }
             })

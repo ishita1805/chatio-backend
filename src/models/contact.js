@@ -13,6 +13,11 @@ const Contact = db.define('Contacts', {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue:false,
+  },
+  notification: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue:false,
   }
 });
 

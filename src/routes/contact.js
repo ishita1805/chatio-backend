@@ -6,6 +6,7 @@ const contactController = require("../controllers/contact.js");
 
 router.post('/create', auth, contactController.createContact);
 router.post('/update', auth, contactController.updateContact);
+router.post('/updateNotification', auth, contactController.updateNotification);
 router.get('/get', auth, contactController.getContacts);
 router.post('/getOne', auth, contactController.getContact);
 router.post('/getOneMedia', auth, contactController.getContactMedia);
