@@ -2,13 +2,12 @@ require('dotenv').config()
 
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
-const morgan = require('morgan');
+
 const cors = require('cors')
-const io = require("socket.io")(server);
 
 
 require('./src/models')
@@ -20,7 +19,7 @@ const port =  process.env.PORT || 4000
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(morgan("dev"));
+
 app.use(fileUpload({
   useTempFiles:true
 }));
@@ -43,13 +42,23 @@ app.use("/message", messageRoutes);
 io.on('connection', (socket) => {
   console.log('user connected')
 
+  socket.on('join', ({ rooms }) => {
+    console.log(rooms);
+    socket.join(rooms);
+  })
+
+  socket.on('sendMessage',({ room, msg }) => {
+    console.log(room)
+    io.to(room).emit('message', { room, msg });
+  })
+
   socket.on('disconnect', () => {
-    console.log('a user disconnected');
+    console.log('user disconnected');
   })
 });
 
 
 
-server.listen(port, ()=>{
+http.listen(port, ()=>{
     console.log(`Server is listening on port ${port}`)
 })
