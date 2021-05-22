@@ -42,9 +42,13 @@ app.use("/message", messageRoutes);
 io.on('connection', (socket) => {
   console.log('user connected')
 
-  socket.on('join', ({ rooms }) => {
-    console.log(rooms);
+  socket.on('join', ({ userID, rooms }) => {
+    console.log(userID, rooms);
+    
     socket.join(rooms);
+
+    io.to(rooms).emit('online', { userID });
+  
   })
 
   socket.on('sendMessage',({ room, msg }) => {

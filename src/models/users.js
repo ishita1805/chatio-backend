@@ -13,6 +13,11 @@ const User = db.define('Users', {
     type: Sequelize.STRING,
     allowNull: true,
   },
+  online: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  },
   password: {
     type: Sequelize.STRING,
     allowNull: false,

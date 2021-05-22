@@ -24,7 +24,9 @@ db.authenticate()
   });
 
 // add within sync to drop and re create tables -> { force: true }
-db.sync()
+db.sync(
+  // { force: true }
+)
   .then(() => {
     console.log('all tables created');
   })

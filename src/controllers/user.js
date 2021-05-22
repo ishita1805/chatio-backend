@@ -15,15 +15,28 @@ exports.login = (req, res, next) => {
             if(!resp2) return res.status(500).json({
                 error: 'password did not match'
             })
-            const token = jwt.sign(resp.id, process.env.ACCESS_TOKEN_SECRET);
-            res.cookie('chat-jwt', token, { domain: process.env.DOMAIN });
-            res.cookie('chat-userid', resp.userid.toString(), { domain: process.env.DOMAIN });
-            res.cookie('chat-id', resp.id.toString(), { domain: process.env.DOMAIN });
-            return res.send({
-                data: 'User has logged In'
+            User.update({
+                online: true
+            }, {
+                where: { userid: req.body.userid }
             })
+            .then(() => {
+                const token = jwt.sign(resp.id, process.env.ACCESS_TOKEN_SECRET);
+                res.cookie('chat-jwt', token, { domain: process.env.DOMAIN });
+                res.cookie('chat-userid', resp.userid.toString(), { domain: process.env.DOMAIN });
+                res.cookie('chat-id', resp.id.toString(), { domain: process.env.DOMAIN });
+                return res.send({
+                    data: 'User has logged In'
+                })
+            })
+            .catch(() => {
+                return res.status(500).json({
+                    error: 'error updating status',
+                })
+            })
+            
         })
-        .catch((e) => {
+        .catch(() => {
             return res.status(500).json({
                 error: 'error verifying password',
             })
@@ -87,7 +100,9 @@ exports.signup = (req, res, next) => {
 
 exports.logout = (req, res, next) => {
     User.update({
-        lastseen: new Date().toString()
+        lastseen: new Date().toString(),
+        online: false,
+
     }, { where: { id: req.body.ID }})
     .then(() => {
         res.clearCookie('chat-id',{ domain: process.env.DOMAIN });
