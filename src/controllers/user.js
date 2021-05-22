@@ -98,25 +98,11 @@ exports.signup = (req, res, next) => {
     })
 }
 
-exports.logout = (req, res, next) => {
-    User.update({
-        lastseen: new Date().toString(),
-        online: false,
-
-    }, { where: { id: req.body.ID }})
-    .then(() => {
+exports.logout = (req, res, next) => { 
         res.clearCookie('chat-id',{ domain: process.env.DOMAIN });
         res.clearCookie('chat-userid',{ domain: process.env.DOMAIN });
         res.clearCookie('chat-jwt',{ domain: process.env.DOMAIN });
         return res.status(200).json({
             message: 'user logged out'
-        })
-    })
-    .catch((e) => {
-        console.log(e);
-        return res.status(500).json({
-            error: 'error logging out'
-        })
-    })
-   
+        }) 
 }

@@ -6,6 +6,7 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
+const User = require('./src/models/users')
 
 const cors = require('cors')
 
@@ -41,10 +42,13 @@ app.use("/message", messageRoutes);
 
 io.on('connection', (socket) => {
   console.log('user connected')
+  let connectedRooms = [];
+  let id = ''
 
   socket.on('join', ({ userID, rooms }) => {
     console.log(userID, rooms);
-    
+    connectedRooms= rooms;
+    id = userID;
     socket.join(rooms);
 
     io.to(rooms).emit('online', { userID });
@@ -61,7 +65,16 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    User.update({
+      lastseen: new Date().toString(),
+      online: false,
+    }, { where: { id }})
+    .then(() => {
+      io.to(connectedRooms).emit('offline', { userID: id });
+    })
+    .catch((e) => {
+        console.log(e);
+    })
   })
 });
 
