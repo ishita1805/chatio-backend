@@ -48,10 +48,11 @@ exports.createRequest = (req, res, next) => {
                         ReceiverId: resp.id,
                         SenderId: req.user,
                     })
-                    .then((resp) => {
+                    .then(() => {
                         // console.log(resp);
                         return res.status(200).json({
-                            message: 'request sent'
+                            message: 'request sent',
+                            id: resp.id
                         })
                     })
                     .catch((e) => {

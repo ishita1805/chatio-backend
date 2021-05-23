@@ -46,17 +46,14 @@ io.on('connection', (socket) => {
   let id = ''
 
   socket.on('join', ({ userID, rooms }) => {
-    console.log(userID, rooms);
+    console.log(`${userID} joined all rooms`);
     connectedRooms= rooms;
     id = userID;
-    socket.join(rooms);
-
     io.to(rooms).emit('online', { userID });
-  
   })
 
   socket.on('sendMessage',({ room, msg }) => {
-    console.log(room)
+    // console.log(room)
     io.to(room).emit('message', { room, msg });
   })
 
@@ -64,17 +61,26 @@ io.on('connection', (socket) => {
     io.to(room).emit('reloadChat', { id, room });
   })
 
+  socket.on('request', ({ id }) => {
+    io.emit('request_socket',({ id }));
+  })
+
+  socket.on('request_accepted', ({ id }) => {
+    io.emit('request_socket_accept',({ id }));
+  })
+
   socket.on('disconnect', () => {
-    User.update({
-      lastseen: new Date().toString(),
-      online: false,
-    }, { where: { id }})
-    .then(() => {
-      io.to(connectedRooms).emit('offline', { userID: id });
-    })
-    .catch((e) => {
-        console.log(e);
-    })
+    console.log('user disconnected');
+    // User.update({
+    //   lastseen: new Date().toString(),
+    //   online: false,
+    // }, { where: { id }})
+    // .then(() => {
+    //   io.to(connectedRooms).emit('offline', { userID: id });
+    // })
+    // .catch((e) => {
+    //     console.log(e);
+    // })
   })
 });
 
