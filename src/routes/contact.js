@@ -8,6 +8,7 @@ router.post('/create', auth, contactController.createContact);
 router.post('/update', auth, contactController.updateContact);
 router.post('/updateNotification', auth, contactController.updateNotification);
 router.get('/get', auth, contactController.getContacts);
+router.get('/getConversation',auth,contactController.getConversations);
 router.post('/getOne', auth, contactController.getContact);
 router.post('/getOneMedia', auth, contactController.getContactMedia);
 

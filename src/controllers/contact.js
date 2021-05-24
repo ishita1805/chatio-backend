@@ -91,6 +91,45 @@ exports.getContacts = (req, res, next) => {
     });
 }
 
+exports.getConversations = (req, res, next) => {
+    Contact.findAll({
+        where: {
+            [Op.or]: {
+                User1Id: req.user,
+                User2Id: req.user,
+            },
+            conversation: true,
+        },
+        include:[
+            {
+                model: User,
+                as: 'User1'
+            },
+            {
+                model: User,
+                as: 'User2'
+            },
+            {
+                model: Message,
+                limit: 1,
+                order: [[ 'createdAt', 'DESC' ]]
+            },
+        ],
+        order: [[ 'updatedAt', 'DESC' ]]
+    })
+    .then((resp) => {
+     res.status(200).json({
+         resp
+     }) 
+    })
+    .catch((e) => {
+        console.log(e);
+        res.status(500).json({
+            error: 'could not get contaCt'
+        })
+    });
+}
+
 
 exports.updateContact = (req, res, next) => {
     Contact.update({ conversation: true },{

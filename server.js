@@ -51,13 +51,23 @@ io.on('connection', (socket) => {
     console.log('updated online')
     socket.join(rooms);
     console.log(`${userID} joined all rooms`);
-    rooms.forEach((room) => {
-      socket.broadcast.to(room).emit('online',{ userID, room });
-    })
+    User.update({ 
+      online: true,
+      lastseen: new Date().toString(),
+     },{ where: { id } })
+      .then(() => {
+        rooms.forEach((room) => {
+          socket.broadcast.to(room).emit('online',{ userID, room });
+        })
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+    
   })
 
   socket.on('sendMessage',({ room, msg }) => {
-    socket.broadcast.to(room).emit('message', { room, msg });
+    io.to(room).emit('messageTrigger', { room, msg });
   })
 
   socket.on('deletedImage',({ id, room }) => {
