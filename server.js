@@ -41,20 +41,23 @@ app.use("/contact", contactRoutes);
 app.use("/message", messageRoutes);
 
 io.on('connection', (socket) => {
-  console.log('user connected')
+  // console.log('user connected')
   let connectedRooms = [];
   let id = ''
 
   socket.on('join', ({ userID, rooms }) => {
+    connectedRooms = rooms;
+    id=userID;
+    console.log('updated online')
+    socket.join(rooms);
     console.log(`${userID} joined all rooms`);
-    connectedRooms= rooms;
-    id = userID;
-    io.to(rooms).emit('online', { userID });
+    rooms.forEach((room) => {
+      socket.broadcast.to(room).emit('online',{ userID, room });
+    })
   })
 
   socket.on('sendMessage',({ room, msg }) => {
-    // console.log(room)
-    io.to(room).emit('message', { room, msg });
+    socket.broadcast.to(room).emit('message', { room, msg });
   })
 
   socket.on('deletedImage',({ id, room }) => {
@@ -69,22 +72,25 @@ io.on('connection', (socket) => {
     io.emit('request_socket_accept',({ id }));
   })
 
+
   socket.on('disconnect', () => {
-    console.log('user disconnected');
-    // User.update({
-    //   lastseen: new Date().toString(),
-    //   online: false,
-    // }, { where: { id }})
-    // .then(() => {
-    //   io.to(connectedRooms).emit('offline', { userID: id });
-    // })
-    // .catch((e) => {
-    //     console.log(e);
-    // })
+    console.log('disconnect');
+    User.update({ 
+      online: false,
+      lastseen: new Date().toString(),
+     },{ where: { id } })
+      .then(() => {
+        connectedRooms.forEach((room) => {
+          console.log(room);
+          socket.broadcast.to(room).emit('offline',{ id, room });
+        })
+      })
+      .catch((e) => {
+        console.log(e);
+      })
   })
+
 });
-
-
 
 http.listen(port, ()=>{
     console.log(`Server is listening on port ${port}`)
