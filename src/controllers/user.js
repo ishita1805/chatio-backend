@@ -127,3 +127,19 @@ exports.updateUser = (req, res, next) => {
         console.log(e);
     })
 }
+
+exports.getUser = (req, res, next) => {
+    User.findOne({ where: { id: req.user }})
+    .then((resp) => {
+        console.log(resp);
+        res.status(200).json({ resp })
+    })
+    .catch((e) => {
+        console.log(e);
+    })
+}
+
+exports.updateProfile = (req, res, next) => {
+    console.log(req.body);
+    res.send('to be done');
+}
