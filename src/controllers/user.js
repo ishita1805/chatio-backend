@@ -62,7 +62,8 @@ exports.signup = (req, res, next) => {
             const user = {
                 userid: req.body.userid,
                 password: hash,
-                lastseen: new Date().toString()
+                lastseen: new Date().toString(),
+                photoNum: Math.floor(Math.random()*6),
             }
             User.create(user)
             .then((resp2) => {

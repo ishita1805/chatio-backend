@@ -26,6 +26,10 @@ const User = db.define('Users', {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  photoNum: {
+    type: Sequelize.INTEGER,
+    allowNull:false,
+  }
 });
 
 module.exports = User;
