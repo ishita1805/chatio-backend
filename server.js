@@ -66,8 +66,12 @@ io.on('connection', (socket) => {
     
   })
 
-  socket.on('sendMessage',({ room, msg }) => {
-    io.to(room).emit('messageTrigger', { room, msg });
+  socket.on('read_notif',({ room }) => {
+    socket.broadcast.to(room).emit('update_read');
+  })
+
+  socket.on('sendMessage',({ userID, room, msg }) => {
+    io.to(room).emit('messageTrigger', { userID, room, msg });
   })
 
   socket.on('deletedImage',({ id, room }) => {
