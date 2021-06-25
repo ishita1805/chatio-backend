@@ -40,6 +40,10 @@ app.use("/request", reqRoutes);
 app.use("/contact", contactRoutes);
 app.use("/message", messageRoutes);
 
+app.get("/", (req, res) => {
+  res.send('Health Check')
+})
+
 io.on('connection', (socket) => {
   // console.log('user connected')
   let connectedRooms = [];
