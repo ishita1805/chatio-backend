@@ -26,7 +26,7 @@ app.use(fileUpload({
 }));
 
 app.use(cors({
-  origin:'https://chat.atishi.me/',
+  origin:'https://chat.atishi.me',
   credentials: true,
 }))
 
